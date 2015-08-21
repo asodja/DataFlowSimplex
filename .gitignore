@@ -1,12 +1,13 @@
 *.class
+*.log
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# bin directory in EngineCode
+bin
 
-# Package Files #
-*.jar
-*.war
-*.ear
+# RunRules
+.maxcompiler-activity.be
+binaries
+dist
+maxfiles
+objects
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
