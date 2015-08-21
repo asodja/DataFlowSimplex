@@ -1,0 +1,40 @@
+package simplex;
+
+import com.maxeler.maxcompiler.v2.kernelcompiler.Kernel;
+import com.maxeler.maxcompiler.v2.kernelcompiler.KernelParameters;
+import com.maxeler.maxcompiler.v2.kernelcompiler.stdlib.Reductions;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.base.DFEType;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.base.DFEVar;
+
+public class RatioKernel extends Kernel {
+
+	public static final String NAME = RatioKernel.class.getSimpleName();
+
+    static final DFEType dataType = dfeFloat(8, 24);
+    static final DFEType idxType = dfeUInt(32);
+
+	protected RatioKernel(KernelParameters parameters) {
+		super(parameters);
+
+		DFEVar n = io.scalarInput("n", idxType);
+
+		DFEVar tick = control.count.simpleCounter(32);
+		DFEVar first = control.count.pulse(1); // tick === 0;
+		DFEVar firstrow = tick < n;
+		DFEVar j = control.count.simpleCounter(32, n);
+
+		DFEVar col = io.input("maxcol", idxType, first);
+		DFEVar A = io.input("Atail", dataType, ~firstrow);
+		DFEVar b = Reductions.streamHold(A, j === 0);
+
+		DFEVar iscol = j === col;
+		io.output("ratio_out", firstrow ? 0 : b / A, dataType, iscol);
+		io.output("pivcol_out", firstrow ? 0 : A, dataType, iscol);
+
+		/*j.simWatch("j");
+		pulse.simWatch("pulse");
+		A.simWatch("A");
+		col.simWatch("col");
+		b.simWatch("b");//*/
+	}
+}

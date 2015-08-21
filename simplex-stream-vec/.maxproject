@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maxCompilerManager version="2">
+<enginePart internalEngineSubproject="simplex-stream-vec_EngineCode" isSrcBin="false" isUseDefaultSelected="false" outputLocation="/simplex-stream-vec_EngineCode/bin" projectName="simplex-stream-vec"/>
+<cpuPart internalCpuSubproject="simplex-stream-vec_CPUCode"/>
+<watchedFiles/>
+</maxCompilerManager>

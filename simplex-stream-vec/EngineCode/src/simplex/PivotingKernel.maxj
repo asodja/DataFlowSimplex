@@ -1,0 +1,62 @@
+package simplex;
+
+import com.maxeler.maxcompiler.v2.kernelcompiler.Kernel;
+import com.maxeler.maxcompiler.v2.kernelcompiler.KernelParameters;
+import com.maxeler.maxcompiler.v2.kernelcompiler.stdlib.core.CounterChain;
+import com.maxeler.maxcompiler.v2.kernelcompiler.stdlib.memory.Memory;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.base.DFEType;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.base.DFEVar;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.composite.DFEVector;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.composite.DFEVectorType;
+import com.maxeler.maxcompiler.v2.utils.MathUtils;
+
+class PivotingKernel extends Kernel {
+
+		public static final String NAME = PivotingKernel.class.getSimpleName();
+
+        static final DFEType dataType = dfeFloat(8, 24);
+
+        PivotingKernel(KernelParameters parameters, int fmemDepth, int vectorDepth) {
+                super(parameters);
+
+                final DFEVectorType<DFEVar> vecType = new DFEVectorType<DFEVar>(dataType, vectorDepth);
+        		final int bitCnt = MathUtils.bitsToAddress(fmemDepth);
+        		final DFEType addrType = dfeUInt(bitCnt);
+
+        		DFEVar m = io.scalarInput("m", addrType);
+        		DFEVar n = io.scalarInput("n", addrType);
+        		DFEVar row = io.scalarInput("row", addrType);
+        		DFEVar col = io.scalarInput("col", addrType);
+        		DFEVar pivot = io.scalarInput("pivot", dataType);
+
+        		CounterChain chain = control.count.makeCounterChain();
+        		DFEVar i = chain.addCounter(m, 1);
+        		DFEVector<DFEVar> j = chain.addCounterVectNoWarn(vectorDepth, n, 1);
+        		DFEVar firstrow = i === 0;
+
+                Memory<DFEVector<DFEVar>> pivrow = mem.alloc(vecType, fmemDepth);
+        		DFEVector<DFEVar> pivrowstream = io.input("pivrow", vecType, firstrow);
+        		pivrow.write(j[0], pivrowstream, firstrow);
+
+        		DFEVar pivcol_i = io.input("pivcol", dataType, j[0] === 0);
+        		DFEVector<DFEVar> pivrow_j = firstrow ? pivrowstream : pivrow.read(j[0]);
+
+        		DFEVector<DFEVar> x = io.input("x", vecType);
+        		DFEVector<DFEVar> t1 = x * pivot;
+        		DFEVector<DFEVar> t2 = x - pivot * pivcol_i * pivrow_j;
+        		DFEVar isrow = i === row;
+        		DFEVector<DFEVar> iscol = j === col;
+        		DFEVector<DFEVar> select = iscol.cat(isrow);
+        		DFEVector<DFEVar> pivots = DFEVectorType.newInstance(vectorDepth, pivot);
+        		DFEVector<DFEVar> y = control.mux(select, t2, t1, -t1, pivots);
+        		io.output("y", y, vecType);
+
+                i.simWatch("i");
+        		j.simWatch("j");
+        		pivcol_i.simWatch("pivcol_i");
+        		pivrow_j.simWatch("pivrow_j");
+        		x.simWatch("x");
+        		y.simWatch("y");//*/
+        }
+
+}

@@ -1,0 +1,60 @@
+package simplex;
+
+import com.maxeler.maxcompiler.v2.kernelcompiler.Kernel;
+import com.maxeler.maxcompiler.v2.kernelcompiler.KernelParameters;
+import com.maxeler.maxcompiler.v2.kernelcompiler.stdlib.core.CounterChain;
+import com.maxeler.maxcompiler.v2.kernelcompiler.stdlib.memory.Memory;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.base.DFEType;
+import com.maxeler.maxcompiler.v2.kernelcompiler.types.base.DFEVar;
+import com.maxeler.maxcompiler.v2.utils.MathUtils;
+
+public class PivotingKernel extends Kernel {
+
+	public static final String NAME = PivotingKernel.class.getSimpleName();
+
+    static final DFEType dataType = dfeFloat(8, 24);
+
+	protected PivotingKernel(KernelParameters parameters, int fmemDepth) {
+		super(parameters);
+
+		final int bitCnt = MathUtils.bitsToAddress(fmemDepth);
+		final DFEType addrType = dfeUInt(bitCnt);
+
+		DFEVar m = io.scalarInput("m", addrType);
+		DFEVar n = io.scalarInput("n", addrType);
+		DFEVar row = io.scalarInput("row", addrType);
+		DFEVar col = io.scalarInput("col", addrType);
+		DFEVar pivot = io.scalarInput("pivot", dataType);
+
+		CounterChain chain = control.count.makeCounterChain();
+		DFEVar i = chain.addCounter(m, 1);
+		DFEVar j = chain.addCounter(n, 1);
+		DFEVar firstrow = i === 0;
+
+		Memory<DFEVar> pivrow = mem.alloc(dataType, fmemDepth);
+		DFEVar pivrowstream = io.input("pivrow", dataType, firstrow);
+		pivrow.write(j, pivrowstream, firstrow);
+
+		DFEVar pivcol_i = io.input("pivcol", dataType, j === 0);
+		DFEVar pivrow_j = firstrow ? pivrowstream : pivrow.read(j);
+
+		DFEVar A = io.input("A", dataType);
+		DFEVar t1 = A * pivot;
+		DFEVar t2 = A - pivot * pivcol_i * pivrow_j;
+		DFEVar isrow = i === row;
+		DFEVar iscol = j === col;
+		DFEVar select = iscol.cat(isrow);
+		DFEVar Aout = control.mux(select, t2, t1, -t1, pivot);
+
+		io.output("A_out", Aout, dataType);
+		io.output("Atail", Aout, dataType, ~firstrow);
+		io.output("c", Aout, dataType, firstrow);
+
+		/*i.simWatch("i");
+		j.simWatch("j");
+		A.simWatch("A");
+		firstrow.simWatch("simwatch");
+		Aout.simWatch("Aout");//*/
+	}
+
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maxCompilerManager>
+<enginePart internalEngineSubproject="simplex-stream_EngineCode" isSrcBin="false" isUseDefaultSelected="false" outputLocation="/simplex-stream_EngineCode/bin" projectName="simplex-stream"/>
+<cpuPart internalCpuSubproject="simplex-stream_CPUCode"/>
+<watchedFiles/>
+</maxCompilerManager>

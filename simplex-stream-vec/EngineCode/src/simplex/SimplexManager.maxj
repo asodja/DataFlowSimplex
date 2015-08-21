@@ -1,0 +1,76 @@
+package simplex;
+
+import com.maxeler.maxcompiler.v2.build.EngineParameters;
+import com.maxeler.maxcompiler.v2.managers.BuildConfig;
+import com.maxeler.maxcompiler.v2.managers.BuildConfig.Effort;
+import com.maxeler.maxcompiler.v2.managers.engine_interfaces.CPUTypes;
+import com.maxeler.maxcompiler.v2.managers.engine_interfaces.EngineInterface;
+import com.maxeler.maxcompiler.v2.managers.engine_interfaces.InterfaceParam;
+import com.maxeler.maxcompiler.v2.managers.standard.Manager;
+
+class SimplexManager extends Manager {
+
+	static final int STREAM_FREQUENCY = 200;
+	static final int FMEM_DEPTH = 12 * 1024;	// floats
+	static final int VECTOR_DEPTH = 4;
+
+	static final CPUTypes paramType = CPUTypes.UINT32;
+	static final CPUTypes dataType = CPUTypes.FLOAT;
+	static final int dataTypeSize = dataType.sizeInBytes();
+
+	public SimplexManager(EngineParameters ep) {
+		super(ep);
+		configBuild(ep);
+
+		setClockFrequency(STREAM_FREQUENCY);
+
+		setKernel(new PivotingKernel(makeKernelParameters(PivotingKernel.NAME), FMEM_DEPTH, VECTOR_DEPTH));
+
+		setIO(IOType.ALL_CPU);
+		createSLiCinterface(interfaceDefault());
+
+		addMaxFileConstant("STREAM_FREQUENCY", STREAM_FREQUENCY);
+		addMaxFileConstant("FMEM_DEPTH", FMEM_DEPTH);
+		addMaxFileConstant("VECTOR_DEPTH", VECTOR_DEPTH);
+	}
+
+	private EngineInterface interfaceDefault() {
+		EngineInterface ei = new EngineInterface();
+
+		InterfaceParam m = ei.addParam("m", paramType);
+		InterfaceParam n = ei.addParam("n", paramType);
+		InterfaceParam row = ei.addParam("row", paramType);
+		InterfaceParam col = ei.addParam("col", paramType);
+		InterfaceParam pivot = ei.addParam("pivot", dataType);
+
+		ei.setScalar(PivotingKernel.NAME, "m", m);
+		ei.setScalar(PivotingKernel.NAME, "n", n);
+		ei.setScalar(PivotingKernel.NAME, "row", row);
+		ei.setScalar(PivotingKernel.NAME, "col", col);
+		ei.setScalar(PivotingKernel.NAME, "pivot", pivot);
+
+		ei.setStream("pivrow", dataType, n * dataTypeSize);
+		ei.setStream("pivcol", dataType, m * dataTypeSize);
+		ei.setStream("x", dataType, m * n * dataTypeSize);
+		ei.setStream("y", dataType, m * n * dataTypeSize);
+
+		ei.setTicks(PivotingKernel.NAME, m * n / VECTOR_DEPTH);
+		return ei;
+	}
+
+	private void configBuild(EngineParameters engineParams) {
+		BuildConfig bc = getBuildConfig();
+		bc.setEnableTimingAnalysis(true);
+		bc.setBuildEffort(Effort.VERY_HIGH);
+		bc.setMPPRParallelism(16);
+		bc.setMPPRRetryNearMissesThreshold(1000);
+		bc.setMPPRCostTableSearchRange(1, 10);
+		setBuildConfig(bc);
+	}
+
+	public static void main(String[] args) {
+		Manager manager = new SimplexManager(new EngineParameters(args));
+		manager.build();
+	}
+
+}
