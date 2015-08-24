@@ -125,12 +125,6 @@ void parse_args(int argc, char * argv[]) {
 int main(int argc, char * argv[]) {
 	// parse command line arguments
 	parse_args(argc, argv);
-	//filename = "/home/demo/Desktop/DataFlow/simplex/lps/128x128-d1-s0.bg";
-	//filename = "/home/demo/Desktop/DataFlow/simplex/lps/32x32-d1-s0.bg";
-	//filename = "/home/demo/Desktop/DataFlow/simplex/lps/24x24-d1-s1.bg";
-	//filename = "/home/demo/Desktop/DataFlow/simplex/lps/opt145.bg";
-	//filename = "/home/demo/Desktop/DataFlow/simplex/lps/vilfan.bg";
-	//trace = 1;
 	// read lp
 	int m, n;
 	lp_t * p = read_bg_filename(filename, &m, &n);
