@@ -1,5 +1,0 @@
-#
-# This file is managed by MaxIDE. Do NOT change.
-#
-HEADERS:= common.h formats.h 
-SOURCES:= SimplexCpuCode.c common.c formats.c
