@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<maxCompilerManager>
+<enginePart internalEngineSubproject="simplex-lmem-vec_EngineCode" isSrcBin="false" isUseDefaultSelected="false" outputLocation="/simplex-lmem-vec_EngineCode/bin" projectName="simplex-lmem-vec"/>
+<cpuPart internalCpuSubproject="simplex-lmem-vec_CPUCode"/>
+<watchedFiles/>
+</maxCompilerManager>
