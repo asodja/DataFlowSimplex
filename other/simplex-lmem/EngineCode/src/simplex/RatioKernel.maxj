@@ -30,11 +30,5 @@ public class RatioKernel extends Kernel {
 		DFEVar iscol = j === col;
 		io.output("ratio_out", firstrow ? 0 : b / A, dataType, iscol);
 		io.output("pivcol_out", firstrow ? 0 : A, dataType, iscol);
-
-		/*j.simWatch("j");
-		pulse.simWatch("pulse");
-		A.simWatch("A");
-		col.simWatch("col");
-		b.simWatch("b");//*/
 	}
 }

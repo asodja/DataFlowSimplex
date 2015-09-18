@@ -45,15 +45,7 @@ class PivotingKernel extends Kernel {
         		DFEVar iscol = j === col;
         		DFEVar select = iscol.cat(isrow);
         		DFEVar y = control.mux(select, t2, t1, -t1, pivot);
-        		//DFEVar y = isrow & iscol ? pivot : (isrow ? t1 : (iscol ? -t1 : t2));
         		io.output("y", y, dataType);
-
-                /*i.simWatch("i");
-        		j.simWatch("j");
-        		pivcol_i.simWatch("pivcol_i");
-        		pivrow_j.simWatch("pivrow_j");
-        		x.simWatch("x");
-        		y.simWatch("y");//*/
         }
 
 }

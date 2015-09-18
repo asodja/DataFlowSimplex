@@ -11,7 +11,7 @@ import com.maxeler.maxcompiler.v2.managers.standard.Manager;
 class SimplexManager extends Manager {
 
 	static final int STREAM_FREQUENCY = 200;
-	static final int FMEM_DEPTH = 12 * 1024;	// floats
+	static final int FMEM_DEPTH = 10 * 1024;	// floats
 	static final int VECTOR_DEPTH = 4;
 
 	static final CPUTypes paramType = CPUTypes.UINT32;
@@ -33,6 +33,18 @@ class SimplexManager extends Manager {
 		addMaxFileConstant("FMEM_DEPTH", FMEM_DEPTH);
 		addMaxFileConstant("VECTOR_DEPTH", VECTOR_DEPTH);
 	}
+
+
+	private void configBuild(EngineParameters engineParams) {
+		BuildConfig bc = getBuildConfig();
+		bc.setEnableTimingAnalysis(true);
+		bc.setBuildEffort(Effort.HIGH);
+		bc.setMPPRParallelism(4);
+		bc.setMPPRRetryNearMissesThreshold(1000);
+		bc.setMPPRCostTableSearchRange(1, 1);
+		setBuildConfig(bc);
+	}
+
 
 	private EngineInterface interfaceDefault() {
 		EngineInterface ei = new EngineInterface();
@@ -58,15 +70,6 @@ class SimplexManager extends Manager {
 		return ei;
 	}
 
-	private void configBuild(EngineParameters engineParams) {
-		BuildConfig bc = getBuildConfig();
-		bc.setEnableTimingAnalysis(true);
-		bc.setBuildEffort(Effort.VERY_HIGH);
-		bc.setMPPRParallelism(16);
-		bc.setMPPRRetryNearMissesThreshold(1000);
-		bc.setMPPRCostTableSearchRange(1, 10);
-		setBuildConfig(bc);
-	}
 
 	public static void main(String[] args) {
 		Manager manager = new SimplexManager(new EngineParameters(args));

@@ -43,14 +43,6 @@ public class MaxKernel extends Kernel {
 
 		io.scalarOutput("maxcol_out", maxidx, idxType);
 		io.output("maxcol", maxidx, idxType, i === n - 1);
-
-		/*i.simWatch("i");
-		l.simWatch("l");
-		c.simWatch("c");
-		maxval.simWatch("maxval");
-		newMax.simWatch("newMax");
-		carriedMax.simWatch("carriedMax");
-		maxidx.simWatch("maxidx");//*/
 	}
 
 }

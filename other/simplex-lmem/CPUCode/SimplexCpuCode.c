@@ -124,8 +124,6 @@ void parse_args(int argc, char * argv[]) {
 int main(int argc, char * argv[]) {
 	// parse command line arguments
 	parse_args(argc, argv);
-	trace = 2;
-	max_iterations = 3;
 	// read lp
 	int m, n;
 	lp_t * p = read_bg_filename(filename, &m, &n);

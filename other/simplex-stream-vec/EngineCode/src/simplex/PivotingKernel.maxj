@@ -50,13 +50,6 @@ class PivotingKernel extends Kernel {
         		DFEVector<DFEVar> pivots = DFEVectorType.newInstance(vectorDepth, pivot);
         		DFEVector<DFEVar> y = control.mux(select, t2, t1, -t1, pivots);
         		io.output("y", y, vecType);
-
-                i.simWatch("i");
-        		j.simWatch("j");
-        		pivcol_i.simWatch("pivcol_i");
-        		pivrow_j.simWatch("pivrow_j");
-        		x.simWatch("x");
-        		y.simWatch("y");//*/
         }
 
 }

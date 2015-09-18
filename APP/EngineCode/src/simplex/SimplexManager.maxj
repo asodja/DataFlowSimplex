@@ -15,8 +15,8 @@ public class SimplexManager extends CustomManager {
 
 	static final int STREAM_FREQUENCY = 200;
 	static final LMemFrequency LMEM_FREQUENCY = LMemFrequency.MAX3_400;
-	static final int FMEM_DEPTH = 12 * 1024;	// floats
-	static final int VECTOR_DEPTH = 48;
+	static final int FMEM_DEPTH = 10 * 1024;	// floats
+	static final int VECTOR_DEPTH = 24;
 
 	static final CPUTypes paramType = CPUTypes.UINT32;
 	static final CPUTypes dataType = CPUTypes.FLOAT;
@@ -46,10 +46,10 @@ public class SimplexManager extends CustomManager {
 	private void configBuild(EngineParameters ep) {
 		BuildConfig bc = getBuildConfig();
 		bc.setEnableTimingAnalysis(true);
-		bc.setBuildEffort(Effort.VERY_HIGH);
-		bc.setMPPRParallelism(16);
+		bc.setBuildEffort(Effort.HIGH);
+		bc.setMPPRParallelism(4);
 		bc.setMPPRRetryNearMissesThreshold(1000);
-		bc.setMPPRCostTableSearchRange(1, 10);
+		bc.setMPPRCostTableSearchRange(1, 1);
 		setBuildConfig(bc);
 	}
 

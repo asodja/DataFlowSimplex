@@ -40,18 +40,5 @@ public class RatioKernel extends Kernel {
 		DFEVar fire = select > 0;
 		io.output("ratio_out", ratio, dataType, fire);
 		io.output("pivcol_out", pivcol, dataType, fire);
-
-		/*j.get(0).simWatch("j_0");
-		col.simWatch("col");
-		firstrow.simWatch("firstrow");
-		A.simWatch("A");
-		b.simWatch("b");
-		iscol.simWatch("iscol");
-		select.simWatch("selec");
-		fire.simWatch("fire");
-		AA.simWatch("AA");
-		ratio.simWatch("ratio");
-		pivcol.simWatch("pivcol");
-		//*/
 	}
 }

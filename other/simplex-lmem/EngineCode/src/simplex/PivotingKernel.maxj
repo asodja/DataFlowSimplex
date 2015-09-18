@@ -49,12 +49,6 @@ public class PivotingKernel extends Kernel {
 		io.output("A_out", Aout, dataType);
 		io.output("Atail", Aout, dataType, ~firstrow);
 		io.output("c", Aout, dataType, firstrow);
-
-		/*i.simWatch("i");
-		j.simWatch("j");
-		A.simWatch("A");
-		firstrow.simWatch("simwatch");
-		Aout.simWatch("Aout");//*/
 	}
 
 }
