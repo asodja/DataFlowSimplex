@@ -96,7 +96,7 @@ public class SimplexManager extends CustomManager {
 		return ei;
 	}
 
-	private EngineInterface modeReadRows(LMemCommandGroup lmem) {
+	private EngineInterface ifaceReadRows(LMemCommandGroup lmem) {
 		addStreamToCPU("rows_fromlmem") <== lmem.addStreamFromLMem("rows_tocpu");
 
 		EngineInterface ei = new EngineInterface("ReadRows");
@@ -109,7 +109,7 @@ public class SimplexManager extends CustomManager {
 		return ei;
 	}
 
-	private EngineInterface modeWriteRows(LMemCommandGroup lmem) {
+	private EngineInterface ifaceWriteRows(LMemCommandGroup lmem) {
 		lmem.addStreamToLMem("rows_fromcpu") <==  addStreamFromCPU("rows_tolmem");
 
 		EngineInterface ei = new EngineInterface("WriteRows");
@@ -118,6 +118,20 @@ public class SimplexManager extends CustomManager {
 		InterfaceParam count = ei.addParam("count", paramType);
 		ei.setStream("rows_tolmem", dataType, count * rowlen * dataTypeSize);
 		ei.setLMemLinear("rows_fromcpu", start * rowlen * dataTypeSize, count * rowlen * dataTypeSize);
+		ei.ignoreAll(Direction.IN_OUT);
+		return ei;
+	}
+
+	private EngineInterface ifaceReadCols(LMemInterface lmem) {
+		addStreamToCPU("cols_fromlmem") <== lmem.addStreamFromLMem("cols_tocpu", LMemCommandGroup.MemoryAccessPattern.STRIDE_2D);
+
+		EngineInterface ei = new EngineInterface("ReadCols");
+		InterfaceParam start = ei.addParam("start", paramType);
+		InterfaceParam rowlen = ei.addParam("rowlen", paramType);
+		InterfaceParam collen = ei.addParam("collen", paramType);
+		InterfaceParam strideMode = ei.addConstant(1);
+		ei.setStream("cols_fromlmem", dataType, collen * dataTypeSize);
+		ei.setLMemStrided("cols_tocpu", start * dataTypeSize, rowlen * dataTypeSize, collen * dataTypeSize, strideMode);
 		ei.ignoreAll(Direction.IN_OUT);
 		return ei;
 	}
@@ -135,8 +149,9 @@ public class SimplexManager extends CustomManager {
 		createKernelBlocks(lmem);
 		createSLiCinterface(modeDefault());
 
-		createSLiCinterface(modeReadRows(lmem));
-		createSLiCinterface(modeWriteRows(lmem));
+		createSLiCinterface(ifaceReadRows(lmem));
+		createSLiCinterface(ifaceWriteRows(lmem));
+		createSLiCinterface(ifaceReadCols(iface));
 
         addMaxFileConstant("STREAM_FREQUENCY", STREAM_FREQUENCY);
         addMaxFileStringConstant("LMEM_FREQUENCY", LMEM_FREQUENCY.toString());

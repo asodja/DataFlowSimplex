@@ -14,64 +14,69 @@ extern "C" {
 
 
 /*----------------------------------------------------------------------------*/
-/*--------------------------- Interface writeLMem ----------------------------*/
+/*---------------------------- Interface ReadRows ----------------------------*/
 /*----------------------------------------------------------------------------*/
 
 
 
 
 /**
- * \brief Basic static function for the interface 'writeLMem'.
+ * \brief Basic static function for the interface 'ReadRows'.
  * 
- * \param [in] param_address Interface Parameter "address".
  * \param [in] param_count Interface Parameter "count".
- * \param [in] instream_tolmem The stream should be of size (param_count * 4) bytes.
+ * \param [in] param_rowlen Interface Parameter "rowlen".
+ * \param [in] param_start Interface Parameter "start".
+ * \param [out] outstream_rows_fromlmem The stream should be of size ((param_count * param_rowlen) * 4) bytes.
  */
-void Simplex_writeLMem(
-	uint32_t param_address,
+void Simplex_ReadRows(
 	uint32_t param_count,
-	const float *instream_tolmem);
+	uint32_t param_rowlen,
+	uint32_t param_start,
+	float *outstream_rows_fromlmem);
 
 /**
- * \brief Basic static non-blocking function for the interface 'writeLMem'.
+ * \brief Basic static non-blocking function for the interface 'ReadRows'.
  * 
  * Schedule to run on an engine and return immediately.
  * The status of the run can be checked either by ::max_wait or ::max_nowait;
  * note that one of these *must* be called, so that associated memory can be released.
  * 
  * 
- * \param [in] param_address Interface Parameter "address".
  * \param [in] param_count Interface Parameter "count".
- * \param [in] instream_tolmem The stream should be of size (param_count * 4) bytes.
+ * \param [in] param_rowlen Interface Parameter "rowlen".
+ * \param [in] param_start Interface Parameter "start".
+ * \param [out] outstream_rows_fromlmem The stream should be of size ((param_count * param_rowlen) * 4) bytes.
  * \return A handle on the execution status, or NULL in case of error.
  */
-max_run_t *Simplex_writeLMem_nonblock(
-	uint32_t param_address,
+max_run_t *Simplex_ReadRows_nonblock(
 	uint32_t param_count,
-	const float *instream_tolmem);
+	uint32_t param_rowlen,
+	uint32_t param_start,
+	float *outstream_rows_fromlmem);
 
 /**
- * \brief Advanced static interface, structure for the engine interface 'writeLMem'
+ * \brief Advanced static interface, structure for the engine interface 'ReadRows'
  * 
  */
 typedef struct { 
-	uint32_t param_address; /**<  [in] Interface Parameter "address". */
 	uint32_t param_count; /**<  [in] Interface Parameter "count". */
-	const float *instream_tolmem; /**<  [in] The stream should be of size (param_count * 4) bytes. */
-} Simplex_writeLMem_actions_t;
+	uint32_t param_rowlen; /**<  [in] Interface Parameter "rowlen". */
+	uint32_t param_start; /**<  [in] Interface Parameter "start". */
+	float *outstream_rows_fromlmem; /**<  [out] The stream should be of size ((param_count * param_rowlen) * 4) bytes. */
+} Simplex_ReadRows_actions_t;
 
 /**
- * \brief Advanced static function for the interface 'writeLMem'.
+ * \brief Advanced static function for the interface 'ReadRows'.
  * 
  * \param [in] engine The engine on which the actions will be executed.
  * \param [in,out] interface_actions Actions to be executed.
  */
-void Simplex_writeLMem_run(
+void Simplex_ReadRows_run(
 	max_engine_t *engine,
-	Simplex_writeLMem_actions_t *interface_actions);
+	Simplex_ReadRows_actions_t *interface_actions);
 
 /**
- * \brief Advanced static non-blocking function for the interface 'writeLMem'.
+ * \brief Advanced static non-blocking function for the interface 'ReadRows'.
  *
  * Schedule the actions to run on the engine and return immediately.
  * The status of the run can be checked either by ::max_wait or ::max_nowait;
@@ -82,22 +87,22 @@ void Simplex_writeLMem_run(
  * \param [in] interface_actions Actions to be executed.
  * \return A handle on the execution status of the actions, or NULL in case of error.
  */
-max_run_t *Simplex_writeLMem_run_nonblock(
+max_run_t *Simplex_ReadRows_run_nonblock(
 	max_engine_t *engine,
-	Simplex_writeLMem_actions_t *interface_actions);
+	Simplex_ReadRows_actions_t *interface_actions);
 
 /**
- * \brief Group run advanced static function for the interface 'writeLMem'.
+ * \brief Group run advanced static function for the interface 'ReadRows'.
  * 
  * \param [in] group Group to use.
  * \param [in,out] interface_actions Actions to run.
  *
  * Run the actions on the first device available in the group.
  */
-void Simplex_writeLMem_run_group(max_group_t *group, Simplex_writeLMem_actions_t *interface_actions);
+void Simplex_ReadRows_run_group(max_group_t *group, Simplex_ReadRows_actions_t *interface_actions);
 
 /**
- * \brief Group run advanced static non-blocking function for the interface 'writeLMem'.
+ * \brief Group run advanced static non-blocking function for the interface 'ReadRows'.
  * 
  *
  * Schedule the actions to run on the first device available in the group and return immediately.
@@ -109,10 +114,10 @@ void Simplex_writeLMem_run_group(max_group_t *group, Simplex_writeLMem_actions_t
  * \param [in] interface_actions Actions to run.
  * \return A handle on the execution status of the actions, or NULL in case of error.
  */
-max_run_t *Simplex_writeLMem_run_group_nonblock(max_group_t *group, Simplex_writeLMem_actions_t *interface_actions);
+max_run_t *Simplex_ReadRows_run_group_nonblock(max_group_t *group, Simplex_ReadRows_actions_t *interface_actions);
 
 /**
- * \brief Array run advanced static function for the interface 'writeLMem'.
+ * \brief Array run advanced static function for the interface 'ReadRows'.
  * 
  * \param [in] engarray The array of devices to use.
  * \param [in,out] interface_actions The array of actions to run.
@@ -120,10 +125,10 @@ max_run_t *Simplex_writeLMem_run_group_nonblock(max_group_t *group, Simplex_writ
  * Run the array of actions on the array of engines.  The length of interface_actions
  * must match the size of engarray.
  */
-void Simplex_writeLMem_run_array(max_engarray_t *engarray, Simplex_writeLMem_actions_t *interface_actions[]);
+void Simplex_ReadRows_run_array(max_engarray_t *engarray, Simplex_ReadRows_actions_t *interface_actions[]);
 
 /**
- * \brief Array run advanced static non-blocking function for the interface 'writeLMem'.
+ * \brief Array run advanced static non-blocking function for the interface 'ReadRows'.
  * 
  *
  * Schedule to run the array of actions on the array of engines, and return immediately.
@@ -135,7 +140,7 @@ void Simplex_writeLMem_run_array(max_engarray_t *engarray, Simplex_writeLMem_act
  * \param [in] interface_actions The array of actions to run.
  * \return A handle on the execution status of the actions, or NULL in case of error.
  */
-max_run_t *Simplex_writeLMem_run_array_nonblock(max_engarray_t *engarray, Simplex_writeLMem_actions_t *interface_actions[]);
+max_run_t *Simplex_ReadRows_run_array_nonblock(max_engarray_t *engarray, Simplex_ReadRows_actions_t *interface_actions[]);
 
 /**
  * \brief Converts a static-interface action struct into a dynamic-interface max_actions_t struct.
@@ -146,69 +151,74 @@ max_run_t *Simplex_writeLMem_run_array_nonblock(max_engarray_t *engarray, Simple
  * \param [in] interface_actions The interface-specific actions to run.
  * \return The dynamic-interface actions to run, or NULL in case of error.
  */
-max_actions_t* Simplex_writeLMem_convert(max_file_t *maxfile, Simplex_writeLMem_actions_t *interface_actions);
+max_actions_t* Simplex_ReadRows_convert(max_file_t *maxfile, Simplex_ReadRows_actions_t *interface_actions);
 
 
 
 /*----------------------------------------------------------------------------*/
-/*---------------------------- Interface readLMem ----------------------------*/
+/*--------------------------- Interface WriteRows ----------------------------*/
 /*----------------------------------------------------------------------------*/
 
 
 
 
 /**
- * \brief Basic static function for the interface 'readLMem'.
+ * \brief Basic static function for the interface 'WriteRows'.
  * 
- * \param [in] param_address Interface Parameter "address".
  * \param [in] param_count Interface Parameter "count".
- * \param [out] outstream_fromlmem The stream should be of size (param_count * 4) bytes.
+ * \param [in] param_rowlen Interface Parameter "rowlen".
+ * \param [in] param_start Interface Parameter "start".
+ * \param [in] instream_rows_tolmem The stream should be of size ((param_count * param_rowlen) * 4) bytes.
  */
-void Simplex_readLMem(
-	uint32_t param_address,
+void Simplex_WriteRows(
 	uint32_t param_count,
-	float *outstream_fromlmem);
+	uint32_t param_rowlen,
+	uint32_t param_start,
+	const float *instream_rows_tolmem);
 
 /**
- * \brief Basic static non-blocking function for the interface 'readLMem'.
+ * \brief Basic static non-blocking function for the interface 'WriteRows'.
  * 
  * Schedule to run on an engine and return immediately.
  * The status of the run can be checked either by ::max_wait or ::max_nowait;
  * note that one of these *must* be called, so that associated memory can be released.
  * 
  * 
- * \param [in] param_address Interface Parameter "address".
  * \param [in] param_count Interface Parameter "count".
- * \param [out] outstream_fromlmem The stream should be of size (param_count * 4) bytes.
+ * \param [in] param_rowlen Interface Parameter "rowlen".
+ * \param [in] param_start Interface Parameter "start".
+ * \param [in] instream_rows_tolmem The stream should be of size ((param_count * param_rowlen) * 4) bytes.
  * \return A handle on the execution status, or NULL in case of error.
  */
-max_run_t *Simplex_readLMem_nonblock(
-	uint32_t param_address,
+max_run_t *Simplex_WriteRows_nonblock(
 	uint32_t param_count,
-	float *outstream_fromlmem);
+	uint32_t param_rowlen,
+	uint32_t param_start,
+	const float *instream_rows_tolmem);
 
 /**
- * \brief Advanced static interface, structure for the engine interface 'readLMem'
+ * \brief Advanced static interface, structure for the engine interface 'WriteRows'
  * 
  */
 typedef struct { 
-	uint32_t param_address; /**<  [in] Interface Parameter "address". */
 	uint32_t param_count; /**<  [in] Interface Parameter "count". */
-	float *outstream_fromlmem; /**<  [out] The stream should be of size (param_count * 4) bytes. */
-} Simplex_readLMem_actions_t;
+	uint32_t param_rowlen; /**<  [in] Interface Parameter "rowlen". */
+	uint32_t param_start; /**<  [in] Interface Parameter "start". */
+	const float *instream_rows_tolmem; /**<  [in] The stream should be of size ((param_count * param_rowlen) * 4) bytes. */
+} Simplex_WriteRows_actions_t;
 
 /**
- * \brief Advanced static function for the interface 'readLMem'.
+ * \brief Advanced static function for the interface 'WriteRows'.
  * 
  * \param [in] engine The engine on which the actions will be executed.
  * \param [in,out] interface_actions Actions to be executed.
  */
-void Simplex_readLMem_run(
+void Simplex_WriteRows_run(
 	max_engine_t *engine,
-	Simplex_readLMem_actions_t *interface_actions);
+	Simplex_WriteRows_actions_t *interface_actions);
 
 /**
- * \brief Advanced static non-blocking function for the interface 'readLMem'.
+ * \brief Advanced static non-blocking function for the interface 'WriteRows'.
  *
  * Schedule the actions to run on the engine and return immediately.
  * The status of the run can be checked either by ::max_wait or ::max_nowait;
@@ -219,22 +229,22 @@ void Simplex_readLMem_run(
  * \param [in] interface_actions Actions to be executed.
  * \return A handle on the execution status of the actions, or NULL in case of error.
  */
-max_run_t *Simplex_readLMem_run_nonblock(
+max_run_t *Simplex_WriteRows_run_nonblock(
 	max_engine_t *engine,
-	Simplex_readLMem_actions_t *interface_actions);
+	Simplex_WriteRows_actions_t *interface_actions);
 
 /**
- * \brief Group run advanced static function for the interface 'readLMem'.
+ * \brief Group run advanced static function for the interface 'WriteRows'.
  * 
  * \param [in] group Group to use.
  * \param [in,out] interface_actions Actions to run.
  *
  * Run the actions on the first device available in the group.
  */
-void Simplex_readLMem_run_group(max_group_t *group, Simplex_readLMem_actions_t *interface_actions);
+void Simplex_WriteRows_run_group(max_group_t *group, Simplex_WriteRows_actions_t *interface_actions);
 
 /**
- * \brief Group run advanced static non-blocking function for the interface 'readLMem'.
+ * \brief Group run advanced static non-blocking function for the interface 'WriteRows'.
  * 
  *
  * Schedule the actions to run on the first device available in the group and return immediately.
@@ -246,10 +256,10 @@ void Simplex_readLMem_run_group(max_group_t *group, Simplex_readLMem_actions_t *
  * \param [in] interface_actions Actions to run.
  * \return A handle on the execution status of the actions, or NULL in case of error.
  */
-max_run_t *Simplex_readLMem_run_group_nonblock(max_group_t *group, Simplex_readLMem_actions_t *interface_actions);
+max_run_t *Simplex_WriteRows_run_group_nonblock(max_group_t *group, Simplex_WriteRows_actions_t *interface_actions);
 
 /**
- * \brief Array run advanced static function for the interface 'readLMem'.
+ * \brief Array run advanced static function for the interface 'WriteRows'.
  * 
  * \param [in] engarray The array of devices to use.
  * \param [in,out] interface_actions The array of actions to run.
@@ -257,10 +267,10 @@ max_run_t *Simplex_readLMem_run_group_nonblock(max_group_t *group, Simplex_readL
  * Run the array of actions on the array of engines.  The length of interface_actions
  * must match the size of engarray.
  */
-void Simplex_readLMem_run_array(max_engarray_t *engarray, Simplex_readLMem_actions_t *interface_actions[]);
+void Simplex_WriteRows_run_array(max_engarray_t *engarray, Simplex_WriteRows_actions_t *interface_actions[]);
 
 /**
- * \brief Array run advanced static non-blocking function for the interface 'readLMem'.
+ * \brief Array run advanced static non-blocking function for the interface 'WriteRows'.
  * 
  *
  * Schedule to run the array of actions on the array of engines, and return immediately.
@@ -272,7 +282,7 @@ void Simplex_readLMem_run_array(max_engarray_t *engarray, Simplex_readLMem_actio
  * \param [in] interface_actions The array of actions to run.
  * \return A handle on the execution status of the actions, or NULL in case of error.
  */
-max_run_t *Simplex_readLMem_run_array_nonblock(max_engarray_t *engarray, Simplex_readLMem_actions_t *interface_actions[]);
+max_run_t *Simplex_WriteRows_run_array_nonblock(max_engarray_t *engarray, Simplex_WriteRows_actions_t *interface_actions[]);
 
 /**
  * \brief Converts a static-interface action struct into a dynamic-interface max_actions_t struct.
@@ -283,7 +293,7 @@ max_run_t *Simplex_readLMem_run_array_nonblock(max_engarray_t *engarray, Simplex
  * \param [in] interface_actions The interface-specific actions to run.
  * \return The dynamic-interface actions to run, or NULL in case of error.
  */
-max_actions_t* Simplex_readLMem_convert(max_file_t *maxfile, Simplex_readLMem_actions_t *interface_actions);
+max_actions_t* Simplex_WriteRows_convert(max_file_t *maxfile, Simplex_WriteRows_actions_t *interface_actions);
 
 
 
@@ -308,9 +318,9 @@ int Simplex_get_MaxKernel_loopLength( void );
  * \param [in] param_pivot Interface Parameter "pivot".
  * \param [in] param_row Interface Parameter "row".
  * \param [out] outscalar_MaxKernel_maxcol_out Output scalar parameter "MaxKernel.maxcol_out".
- * \param [in] instream_pivcol The stream should be of size (param_m * 4) bytes.
- * \param [in] instream_pivrow The stream should be of size (param_n * 4) bytes.
- * \param [out] outstream_c_out The stream should be of size (param_n * 4) bytes.
+ * \param [in] instream_pivot_col The stream should be of size (param_m * 4) bytes.
+ * \param [in] instream_pivot_row The stream should be of size (param_n * 4) bytes.
+ * \param [out] outstream_cost The stream should be of size (param_n * 4) bytes.
  * \param [out] outstream_pivcol_out The stream should be of size (param_m * 4) bytes.
  * \param [out] outstream_ratio_out The stream should be of size (param_m * 4) bytes.
  */
@@ -321,9 +331,9 @@ void Simplex(
 	float param_pivot,
 	uint32_t param_row,
 	uint64_t *outscalar_MaxKernel_maxcol_out,
-	const float *instream_pivcol,
-	const float *instream_pivrow,
-	float *outstream_c_out,
+	const float *instream_pivot_col,
+	const float *instream_pivot_row,
+	float *outstream_cost,
 	float *outstream_pivcol_out,
 	float *outstream_ratio_out);
 
@@ -341,9 +351,9 @@ void Simplex(
  * \param [in] param_pivot Interface Parameter "pivot".
  * \param [in] param_row Interface Parameter "row".
  * \param [out] outscalar_MaxKernel_maxcol_out Output scalar parameter "MaxKernel.maxcol_out".
- * \param [in] instream_pivcol The stream should be of size (param_m * 4) bytes.
- * \param [in] instream_pivrow The stream should be of size (param_n * 4) bytes.
- * \param [out] outstream_c_out The stream should be of size (param_n * 4) bytes.
+ * \param [in] instream_pivot_col The stream should be of size (param_m * 4) bytes.
+ * \param [in] instream_pivot_row The stream should be of size (param_n * 4) bytes.
+ * \param [out] outstream_cost The stream should be of size (param_n * 4) bytes.
  * \param [out] outstream_pivcol_out The stream should be of size (param_m * 4) bytes.
  * \param [out] outstream_ratio_out The stream should be of size (param_m * 4) bytes.
  * \return A handle on the execution status, or NULL in case of error.
@@ -355,9 +365,9 @@ max_run_t *Simplex_nonblock(
 	float param_pivot,
 	uint32_t param_row,
 	uint64_t *outscalar_MaxKernel_maxcol_out,
-	const float *instream_pivcol,
-	const float *instream_pivrow,
-	float *outstream_c_out,
+	const float *instream_pivot_col,
+	const float *instream_pivot_row,
+	float *outstream_cost,
 	float *outstream_pivcol_out,
 	float *outstream_ratio_out);
 
@@ -372,9 +382,9 @@ typedef struct {
 	float param_pivot; /**<  [in] Interface Parameter "pivot". */
 	uint32_t param_row; /**<  [in] Interface Parameter "row". */
 	uint64_t *outscalar_MaxKernel_maxcol_out; /**<  [out] Output scalar parameter "MaxKernel.maxcol_out". */
-	const float *instream_pivcol; /**<  [in] The stream should be of size (param_m * 4) bytes. */
-	const float *instream_pivrow; /**<  [in] The stream should be of size (param_n * 4) bytes. */
-	float *outstream_c_out; /**<  [out] The stream should be of size (param_n * 4) bytes. */
+	const float *instream_pivot_col; /**<  [in] The stream should be of size (param_m * 4) bytes. */
+	const float *instream_pivot_row; /**<  [in] The stream should be of size (param_n * 4) bytes. */
+	float *outstream_cost; /**<  [out] The stream should be of size (param_n * 4) bytes. */
 	float *outstream_pivcol_out; /**<  [out] The stream should be of size (param_m * 4) bytes. */
 	float *outstream_ratio_out; /**<  [out] The stream should be of size (param_m * 4) bytes. */
 } Simplex_actions_t;

@@ -28,7 +28,7 @@ public class RatioKernel extends Kernel {
 		DFEVector<DFEVar> j = control.count.simpleCounterVect(vectorDepth, 32, n);
 
 		DFEVar col = io.input("maxcol", idxType, first);
-		DFEVector<DFEVar> A = io.input("Atail", vecType, ~firstrow);
+		DFEVector<DFEVar> A = io.input("tableau_tail", vecType, ~firstrow);
 		DFEVar b = Reductions.streamHold(A[0], j[0] === 0);
 
 		DFEVector<DFEVar> iscol = j === col;

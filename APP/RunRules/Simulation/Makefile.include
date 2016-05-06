@@ -89,7 +89,7 @@ $(OBJDIR)/slic_Simplex.o: $(MAXDIR)/Simplex.max
 	$(SLICCOMPILE) "$<" "$@"
 
 $(MAXDIR)/Simplex.max: 
-	( cd "$(THIS_PATH)/" && if [ -z "$${MAXCOMPILER_BUILD_DIR+xxx}" ]; then export MAXCOMPILER_BUILD_DIR="$(realpath $(MAXDIR))"; fi ;  export MAX_BUILDPARAMS="DFEModel='MAX3424A' target='DFE_SIM' maxFileName='Simplex' " ; set -o pipefail ; ant -v -f "Simplex.xml" run 2>&1 | tee Simplex_cmd.log ; exit ${PIPESTATUS[0]} )
+	( cd "$(THIS_PATH)/" && if [ -z "$${MAXCOMPILER_BUILD_DIR+xxx}" ]; then export MAXCOMPILER_BUILD_DIR="$(realpath $(MAXDIR))"; fi ;  export MAX_BUILDPARAMS="DFEModel='VECTIS' target='DFE_SIM' maxFileName='Simplex' " ; set -o pipefail ; ant -v -f "Simplex.xml" run 2>&1 | tee Simplex_cmd.log ; exit ${PIPESTATUS[0]} )
 	cp "`grep -o -e "^.*MaxFile: .*\.max" $(THIS_PATH)/Simplex_cmd.log | cut -d ':'  -f 4 | sed 's/^ //g'`" "$(MAXDIR)/Simplex.max"
 	cp "`grep -o -e "^.*MaxFile: .*\.max" $(THIS_PATH)/Simplex_cmd.log | cut -d ':'  -f 4 | sed 's/^ //g' | sed 's/\.max/.h/g'`" "$(MAXDIR)/Simplex.h"
 	cp -f "$(MAXDIR)/"*.h "$(INCDIR)/"
@@ -125,9 +125,9 @@ override RUNARGS+= $(EXTRAARGS)
 endif
 
 startsim:
-	$(MAXCOMPILERDIR_QUOTE)/bin/maxcompilersim -n $(PORT_NAME_SIM) -c MAX3424A -d 1  restart
+	$(MAXCOMPILERDIR_QUOTE)/bin/maxcompilersim -n $(PORT_NAME_SIM) -c VECTIS -d 1  restart
 
 stopsim:
-	$(MAXCOMPILERDIR_QUOTE)/bin/maxcompilersim -n $(PORT_NAME_SIM) -c MAX3424A -d 1  stop
+	$(MAXCOMPILERDIR_QUOTE)/bin/maxcompilersim -n $(PORT_NAME_SIM) -c VECTIS -d 1  stop
 
 

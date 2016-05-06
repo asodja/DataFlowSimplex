@@ -8,7 +8,7 @@ int calc_align(int size, int align) {
 
 
 lp_t * copy_aligned(const int m, const int n, const lp_t * p, int * align_m, int * align_n) {
-	*align_m = calc_align(m, ALIGN_STREAM / sizeof(lp_t));
+	*align_m = calc_align(m, ALIGN_BURST / sizeof(lp_t));
 	*align_n = calc_align(n, ALIGN_BURST / sizeof(lp_t));
 
 	lp_t * ap = (lp_t*)malloc(*align_m * *align_n * sizeof(lp_t));
@@ -71,6 +71,25 @@ int find_pivot_row(const int m, const lp_t * ratio) {
 }
 
 
+static const char const *err_tag = "Error!!!";
+static void raise_error(const char *msg)
+{
+	fprintf(stderr, "%s: %s\n", err_tag, msg);
+	fflush (stderr);
+}
+
+
+static void check_errors(max_errors_t *errors)
+{
+	// If there are any errors, write them to stderr stream for the GUI to handle
+	if (!max_ok(errors)) {
+		char *trace = max_errors_trace(errors);
+		raise_error(trace);
+		free(trace);
+	}
+}
+
+
 unsigned int simplex(const int m, const int n, lp_t * p) {
     // init DFE
     max_file_t * maxfile = Simplex_init();
@@ -93,31 +112,36 @@ unsigned int simplex(const int m, const int n, lp_t * p) {
 	}
 	int row = find_pivot_row(m, ratio);
 	for (int i = 0; i < align_n; i++) pivrow[i] = align_p[row * align_n + i];
-	// write LP to LMem
-    Simplex_writeLMem_actions_t writeact;
-    writeact.param_address = 0;
-    writeact.param_count = align_m * align_n;
-    writeact.instream_tolmem = align_p;
-    Simplex_writeLMem_run(engine, &writeact);
+	// WriteRows - write whole tableau to lmem
+    Simplex_WriteRows_actions_t writeRows;
+    writeRows.param_start = 0;
+    writeRows.param_rowlen = align_n;
+    writeRows.param_count = align_m;
+    writeRows.instream_rows_tolmem = align_p;
+    Simplex_WriteRows_run(engine, &writeRows);
+    // ReadRows action initialization
+    Simplex_ReadRows_actions_t readRows;
+    readRows.param_start = 0; // to be filled later
+    readRows.param_rowlen = align_n;
+    readRows.param_count = 1;
+    readRows.outstream_rows_fromlmem = pivrow;
 	// simplex action to call DFE
 	Simplex_actions_t act;
 	act.param_m = align_m;
 	act.param_n = align_n;
-	act.instream_pivcol = pivcol;
-	act.instream_pivrow = pivrow;
+	act.instream_pivot_col = pivcol;
+	act.instream_pivot_row = pivrow;
 	act.outscalar_MaxKernel_maxcol_out = &col;
 	act.outstream_ratio_out = ratio;
 	act.outstream_pivcol_out = pivcol;
-	act.outstream_c_out = c;
+	act.outstream_cost = c;
+
 	// main loop
 	unsigned int count = 0;
 	while (count < max_iterations || max_iterations == 0) {
 		// read pivot row from lmem
-	    Simplex_readLMem_actions_t readact;
-	    readact.param_address = row * align_n;
-	    readact.param_count = align_n;
-	    readact.outstream_fromlmem = pivrow;
-	    Simplex_readLMem_run(engine, &readact);
+	    readRows.param_start = row;
+	    Simplex_ReadRows_run(engine, &readRows);
 	    // pivoting,max,filter
 	    count++;
 		lp_t pivot = pivrow[col];
@@ -137,6 +161,7 @@ unsigned int simplex(const int m, const int n, lp_t * p) {
 		row = find_pivot_row(m, ratio);
 		if (row < 0) { p[0] = NAN; break; }	// unbounded
     }
+
 	// unload DFE
 	max_unload(engine);
 	// return results (TODO: copy full lp from lmem to p)

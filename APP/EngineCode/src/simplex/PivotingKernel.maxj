@@ -35,24 +35,24 @@ public class PivotingKernel extends Kernel {
 		DFEVar firstrow = i === 0;
 
 		Memory<DFEVector<DFEVar>> pivrow = mem.alloc(vecType, fmemDepth);
-		DFEVector<DFEVar> pivrowstream = io.input("pivrow", vecType, firstrow);
+		DFEVector<DFEVar> pivrowstream = io.input("pivot_row", vecType, firstrow);
 		pivrow.write(j[0], pivrowstream, firstrow);
 
-		DFEVar pivcol_i = io.input("pivcol", dataType, j[0] === 0);
+		DFEVar pivcol_i = io.input("pivot_col", dataType, j[0] === 0);
 		DFEVector<DFEVar> pivrow_j = firstrow ? pivrowstream : pivrow.read(j[0]);
 
-		DFEVector<DFEVar> A = io.input("A", vecType);
-		DFEVector<DFEVar> t1 = A * pivot;
-		DFEVector<DFEVar> t2 = A - pivot * pivcol_i * pivrow_j;
+		DFEVector<DFEVar> x = io.input("tableau", vecType);
+		DFEVector<DFEVar> t1 = x * pivot;
+		DFEVector<DFEVar> t2 = x - pivot * pivcol_i * pivrow_j;
 		DFEVar isrow = i === row;
 		DFEVector<DFEVar> iscol = j === col;
 		DFEVector<DFEVar> select = iscol.cat(isrow);
 		DFEVector<DFEVar> pivots = DFEVectorType.newInstance(vectorDepth, pivot);
-		DFEVector<DFEVar> Aout = control.mux(select, t2, t1, -t1, pivots);
+		DFEVector<DFEVar> y = control.mux(select, t2, t1, -t1, pivots);
 
-		io.output("A_out", Aout, vecType);
-		io.output("Atail", Aout, vecType, ~firstrow);
-		io.output("c", Aout, vecType, firstrow);
+		io.output("tableau_out", y, vecType);
+		io.output("tableau_tail", y, vecType, ~firstrow);
+		io.output("cost", y, vecType, firstrow);
 	}
 
 }
