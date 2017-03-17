@@ -6,10 +6,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define Simplex_FMEM_DEPTH (12288)
+#define Simplex_FMEM_DEPTH (10240)
 #define Simplex_STREAM_FREQUENCY (200)
 #define Simplex_LMEM_FREQUENCY ("MAX3_400")
-#define Simplex_VECTOR_DEPTH (2)
+#define Simplex_VECTOR_DEPTH (24)
 #define Simplex_PCIE_ALIGNMENT (16)
 
 
