@@ -4,6 +4,15 @@
 # bin directory in EngineCode
 bin
 
+# CPU code
+*.o
+genlp
+sollp
+
+# bench
+*.bg
+*.csv
+
 # RunRules
 .maxcompiler-activity.be
 binaries
