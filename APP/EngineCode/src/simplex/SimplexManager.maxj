@@ -5,7 +5,8 @@ import com.maxeler.maxcompiler.v2.managers.BuildConfig;
 import com.maxeler.maxcompiler.v2.managers.BuildConfig.Effort;
 import com.maxeler.maxcompiler.v2.managers.custom.CustomManager;
 import com.maxeler.maxcompiler.v2.managers.custom.blocks.KernelBlock;
-import com.maxeler.maxcompiler.v2.managers.custom.stdlib.MemoryControlGroup.MemoryAccessPattern;
+import com.maxeler.maxcompiler.v2.managers.custom.stdlib.LMemCommandGroup;
+import com.maxeler.maxcompiler.v2.managers.custom.stdlib.LMemInterface;
 import com.maxeler.maxcompiler.v2.managers.engine_interfaces.CPUTypes;
 import com.maxeler.maxcompiler.v2.managers.engine_interfaces.EngineInterface;
 import com.maxeler.maxcompiler.v2.managers.engine_interfaces.EngineInterface.Direction;
@@ -29,7 +30,6 @@ public class SimplexManager extends CustomManager {
 		config.setDefaultStreamClockFrequency(STREAM_FREQUENCY);
 		config.setOnCardMemoryFrequency(LMEM_FREQUENCY);
 
-		createLinksHost2LMem();
 		createKernelBlocks();
 
 		createSLiCinterface(modeDefault());
@@ -54,14 +54,12 @@ public class SimplexManager extends CustomManager {
 	}
 
 
-	private void createLinksHost2LMem() {
-		// LMem R/W: streams to and from LMEM
-		addStreamToOnCardMemory("cpu2lmem", MemoryAccessPattern.LINEAR_1D) <== addStreamFromCPU("tolmem");
-		addStreamToCPU("fromlmem") <== addStreamFromOnCardMemory("lmem2cpu", MemoryAccessPattern.LINEAR_1D);
-	}
-
-
 	private void createKernelBlocks() {
+		// LMem R/W: streams to and from LMEM
+		LMemInterface iface = addLMemInterface();
+		iface.addStreamToLMem("cpu2lmem", LMemCommandGroup.MemoryAccessPattern.LINEAR_1D) <==  addStreamFromCPU("tolmem");
+		addStreamToCPU("fromlmem") <== iface.addStreamFromLMem("lmem2cpu", LMemCommandGroup.MemoryAccessPattern.LINEAR_1D);
+
 		// setup kernels
 		KernelBlock pb = addKernel(new PivotingKernel(makeKernelParameters(PivotingKernel.NAME), FMEM_DEPTH, VECTOR_DEPTH));
 		KernelBlock mb = addKernel(new MaxKernel(makeKernelParameters(MaxKernel.NAME)));
@@ -70,10 +68,10 @@ public class SimplexManager extends CustomManager {
 		// PivotingKernel inputs
 		pb.getInput("pivcol") <== addStreamFromCPU("pivcol");
 		pb.getInput("pivrow") <== addStreamFromCPU("pivrow");
-		pb.getInput("A") <== addStreamFromOnCardMemory("A_in", MemoryAccessPattern.LINEAR_1D);
+		pb.getInput("A") <== iface.addStreamFromLMem("A_in", LMemCommandGroup.MemoryAccessPattern.LINEAR_1D);
 
 		// LMem inputs
-		addStreamToOnCardMemory("A_out", MemoryAccessPattern.LINEAR_1D) <==  pb.getOutput("A_out");
+		iface.addStreamToLMem("A_out", LMemCommandGroup.MemoryAccessPattern.LINEAR_1D) <==  pb.getOutput("A_out");
 
 		// MaxKernel inputs
 		mb.getInput("c") <== pb.getOutput("c");

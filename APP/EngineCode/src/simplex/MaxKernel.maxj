@@ -30,12 +30,10 @@ public class MaxKernel extends Kernel {
 
 		DFEVar c = io.input("c", dataType, l === 0);
 
-		optimization.pushPipeliningFactor(0);
 		DFEVar oldmaxval = dataType.newInstance(this);
 		DFEVar greater = c > oldmaxval;
 		DFEVar maxval = Reductions.streamHold(c, greater);
 		oldmaxval <== stream.offset(maxval, -loopLength);
-		optimization.popPipeliningFactor();
 
 		DFEVar maxidx = Reductions.streamHold(i, greater);
 
