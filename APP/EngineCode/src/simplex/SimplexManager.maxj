@@ -14,8 +14,8 @@ import com.maxeler.maxcompiler.v2.managers.engine_interfaces.InterfaceParam;
 
 public class SimplexManager extends CustomManager {
 
-	static final int STREAM_FREQUENCY = 200;
-	static final LMemFrequency LMEM_FREQUENCY = LMemFrequency.MAX3_400;
+	static final int STREAM_FREQUENCY = 150;
+	static final LMemFrequency LMEM_FREQUENCY = LMemFrequency.MAX3_333;
 	static final int FMEM_DEPTH = 10 * 1024;	// floats
 	static final int VECTOR_DEPTH = 24;
 
