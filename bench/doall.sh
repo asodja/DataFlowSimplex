@@ -7,7 +7,7 @@
 )
 
 # DFE make
-DF=Simulation
+DF=DFE
 (
   cd ../APP/RunRules/$DF
   make
