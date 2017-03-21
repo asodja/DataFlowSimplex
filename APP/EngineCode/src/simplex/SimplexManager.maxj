@@ -49,7 +49,7 @@ public class SimplexManager extends CustomManager {
 		bc.setBuildEffort(Effort.HIGH);
 		bc.setMPPRParallelism(4);
 		bc.setMPPRRetryNearMissesThreshold(1000);
-		bc.setMPPRCostTableSearchRange(1, 1);
+		bc.setMPPRCostTableSearchRange(1, 8);
 		setBuildConfig(bc);
 	}
 
